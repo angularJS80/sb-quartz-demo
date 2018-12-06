@@ -4,9 +4,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.javabypatel.demo.job.HttpCallJob;
+import com.javabypatel.demo.job.ServiceCallJob;
+import com.javabypatel.demo.util.CustomClassLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,7 +55,11 @@ public class JobController {
 				
 			}else{
 				//Cron Trigger
-				boolean status = jobService.scheduleCronJob(jobName, CronJob.class, jobScheduleTime, cronExpression);
+				CustomClassLoader customClassLoader = new CustomClassLoader();
+				Class c = customClassLoader.findClass("com.javabypatel.demo.job.ServiceCallJob");
+				//c = ServiceCallJob.class;
+
+				boolean status = jobService.scheduleCronJob(jobName, c, jobScheduleTime, cronExpression);
 				if(status){
 					return getServerResponse(ServerResponseCode.SUCCESS, jobService.getAllJobs());
 				}else{
