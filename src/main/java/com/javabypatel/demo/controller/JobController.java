@@ -30,9 +30,10 @@ public class JobController {
 	@Lazy
 	JobService jobService;
 
-	@RequestMapping("schedule")	
-	public ServerResponse schedule(@RequestParam("jobName") String jobName, 
-			@RequestParam("jobScheduleTime") @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm") Date jobScheduleTime, 
+	@RequestMapping("addSchedule")
+	public ServerResponse schedule(@RequestParam("jobName") String jobName,
+			@RequestParam("jobScheduleTime") @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm") Date jobScheduleTime,
+			@RequestParam("jobPackageClass") String jobPackageClass,
 			@RequestParam("cronExpression") String cronExpression){
 		System.out.println("JobController.schedule()");
 
@@ -43,29 +44,25 @@ public class JobController {
 
 		//Check if job Name is unique;
 		if(!jobService.isJobWithNamePresent(jobName)){
-
+			boolean status;
 			if(cronExpression == null || cronExpression.trim().equals("")){
 				//Single Trigger
-				boolean status = jobService.scheduleOneTimeJob(jobName, SimpleJob.class, jobScheduleTime);
-				if(status){
-					return getServerResponse(ServerResponseCode.SUCCESS, jobService.getAllJobs());
-				}else{
-					return getServerResponse(ServerResponseCode.ERROR, false);
-				}
-				
+				status = jobService.scheduleOneTimeJob(jobName, SimpleJob.class, jobScheduleTime);
 			}else{
 				//Cron Trigger
 				CustomClassLoader customClassLoader = new CustomClassLoader();
-				Class c = customClassLoader.findClass("com.javabypatel.demo.job.ServiceCallJob");
+				Class c = customClassLoader.findClass(jobPackageClass);
 				//c = ServiceCallJob.class;
 
-				boolean status = jobService.scheduleCronJob(jobName, c, jobScheduleTime, cronExpression);
-				if(status){
-					return getServerResponse(ServerResponseCode.SUCCESS, jobService.getAllJobs());
-				}else{
-					return getServerResponse(ServerResponseCode.ERROR, false);
-				}				
+				status = jobService.scheduleCronJob(jobName, c, jobScheduleTime, cronExpression);
 			}
+
+			if(status){
+				return getServerResponse(ServerResponseCode.SUCCESS, jobService.getAllJobs());
+			}else{
+				return getServerResponse(ServerResponseCode.ERROR, false);
+			}
+
 		}else{
 			return getServerResponse(ServerResponseCode.JOB_WITH_SAME_NAME_EXIST, false);
 		}
