@@ -4,19 +4,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.javabypatel.demo.job.HttpCallJob;
-import com.javabypatel.demo.job.ServiceCallJob;
 import com.javabypatel.demo.util.CustomClassLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.javabypatel.demo.dto.ServerResponse;
-import com.javabypatel.demo.job.CronJob;
 import com.javabypatel.demo.job.SimpleJob;
 import com.javabypatel.demo.service.JobService;
 import com.javabypatel.demo.util.ServerResponseCode;
