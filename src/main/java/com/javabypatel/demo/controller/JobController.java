@@ -26,6 +26,14 @@ public class JobController {
 	@Lazy
 	JobService jobService;
 
+
+/*
+	jobName	testjob4
+	jobScheduleTime 2018/12/07 10:21
+	cronExpression 0/15 0/1 * 1/1 * ? *
+	jobPackageClass com.javabypatel.demo.job.ServiceCallJob
+*/
+
 	@RequestMapping("addSchedule")
 	public ServerResponse schedule(@RequestParam("jobName") String jobName,
 			@RequestParam("jobScheduleTime") @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm") Date jobScheduleTime,
