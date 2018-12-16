@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.javabypatel.demo.util.CustomClassLoader;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -54,11 +54,12 @@ public class JobController {
 				status = jobService.scheduleOneTimeJob(jobName, SimpleJob.class, jobScheduleTime);
 			}else{
 				//Cron Trigger
-				CustomClassLoader customClassLoader = new CustomClassLoader();
-				Class c = customClassLoader.findClass(jobPackageClass);
-				//c = ServiceCallJob.class;
-
-				status = jobService.scheduleCronJob(jobName, c, jobScheduleTime, cronExpression);
+				Class<QuartzJobBean>  c = null;//= customClassLoader.findClass(jobPackageClass);
+				try {
+					c = (Class<QuartzJobBean>) Class.forName(jobPackageClass);
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
 			}
 
 			if(status){
