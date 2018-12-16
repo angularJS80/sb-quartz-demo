@@ -48,7 +48,7 @@ public class JobController {
 
 		//Check if job Name is unique;
 		if(!jobService.isJobWithNamePresent(jobName)){
-			boolean status;
+			boolean status = false;
 			if(cronExpression == null || cronExpression.trim().equals("")){
 				//Single Trigger
 				status = jobService.scheduleOneTimeJob(jobName, SimpleJob.class, jobScheduleTime);
@@ -60,6 +60,7 @@ public class JobController {
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				}
+				status = jobService.scheduleCronJob(jobName, c, jobScheduleTime, cronExpression);
 			}
 
 			if(status){
